@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Liderazgo Aumentado con Inteligencia Artificial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caladea:wght@400;700&family=Carlito:ital,wght@0,400;0,700;1,400&family=Patrick+Hand&family=Patrick+Hand+SC&display=swap">
+<style>
+html{color-scheme:light}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+/* Layout: una columna de lectura alineada a la izquierda; cada pregunta lleva una barra de acento
+   por grupo temático; la pirámide rompe la columna y ocupa el ancho completo. Fondo blanco único. */
+:root{
+  --paper:#FFFFFF;
+  --ink:#111114;
+  --ink-soft:#4B4B57;
+  --rule:#D8D8E2;
+  --blue:#1F5FD0;
+  --sky:#DDEBF9;
+  --sky-strong:#AED3F5;
+  --violet:#7B3FB8;
+  --orange:#DD6F1A;
+  --turq:#0E9499;
+  --lav:#E9E4FB;
+  --peach:#FCE9DC;
+  --lemon:#FBF4CC;
+  --mint:#E6F2DD;
+  --alert:#C22B1F;
+  --f-display:Cambria,Caladea,Georgia,serif;
+  --f-body:Calibri,Carlito,"Segoe UI",Arial,sans-serif;
+  --f-sketch:"Patrick Hand SC","Patrick Hand","Comic Sans MS",cursive;
+  --f-note:"Patrick Hand","Comic Sans MS",cursive;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:1.125rem;line-height:1.55}
+.page{max-width:1240px;margin-inline:auto;padding-inline:clamp(16px,4vw,40px);padding-block:clamp(28px,6vw,72px);display:flex;flex-direction:column;gap:clamp(40px,7vw,84px)}
+
+/* Encabezado */
+.hero{display:flex;flex-direction:column;gap:clamp(16px,2.6vw,26px);max-width:52rem}
+.byline{margin:0;font-weight:700;font-size:clamp(.85rem,1.6vw,1.05rem);letter-spacing:.2em}
+h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(2.3rem,6.4vw,4.6rem);line-height:1.05;letter-spacing:-.012em;text-wrap:balance}
+.mark{position:relative;display:inline-block;white-space:nowrap}
+.mark svg{position:absolute;left:-2%;bottom:-.15em;width:104%;height:.24em;overflow:visible}
+.mark path{fill:none;stroke:var(--blue);stroke-width:6;stroke-linecap:round}
+.intro{display:flex;flex-direction:column;gap:1em;max-width:62ch;font-size:clamp(1.08rem,1.5vw,1.22rem);padding-top:clamp(4px,1vw,10px)}
+.intro p{margin:0}
+.intro .pacto{border-left:6px solid var(--turq);padding-left:16px;color:var(--ink-soft)}
+
+/* Preguntas */
+.form{display:flex;flex-direction:column;gap:clamp(44px,7vw,84px)}
+.q{--bar:var(--violet);border-left:6px solid var(--bar);padding-left:clamp(12px,2.6vw,28px);display:flex;flex-direction:column;gap:clamp(16px,2.4vw,24px);min-width:0}
+.q-head{display:flex;gap:clamp(10px,1.6vw,18px);align-items:baseline;max-width:50rem}
+.q-n{font-family:var(--f-sketch);font-size:clamp(2rem,4vw,2.8rem);line-height:1;color:var(--bar);flex:none}
+.q-t{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(1.25rem,2.4vw,1.6rem);line-height:1.25;text-wrap:balance;min-width:0}
+.q-hint{margin:0;color:var(--ink-soft);font-size:1.02rem;max-width:62ch}
+.q-out{margin:0;font-family:var(--f-note);font-size:1.25rem;line-height:1.3}
+.q-err{margin:0;color:var(--alert);font-weight:700}
+
+/* 1 · Barra 0–100 */
+.meter{position:relative;max-width:40rem;padding:56px 34px 0;touch-action:none;cursor:pointer;outline:none;user-select:none;-webkit-user-select:none}
+.meter-track{position:relative;height:30px;border:3px solid var(--ink);border-radius:999px;background:var(--paper)}
+.meter-clip{position:absolute;inset:0;border-radius:999px;overflow:hidden}
+.meter-fill{position:absolute;inset:0 auto 0 0;width:0;background:var(--blue)}
+.meter-thumb{position:absolute;top:50%;left:0;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:var(--paper);border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.meter-thumb::after{content:"";position:absolute;inset:9px;border-radius:50%;background:var(--blue)}
+.meter-val{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);font-family:var(--f-sketch);font-size:2.1rem;line-height:1;white-space:nowrap}
+.meter:focus-visible .meter-thumb{outline:3px solid var(--blue);outline-offset:4px}
+.meter-scale{position:relative;height:2.2em;margin-top:14px;font-family:var(--f-note);font-size:1.05rem;color:var(--ink-soft)}
+.meter-scale span{position:absolute;top:0;transform:translateX(-50%);padding-top:10px}
+.meter-scale span::before{content:"";position:absolute;left:50%;top:0;width:2px;height:8px;margin-left:-1px;background:var(--ink-soft)}
+
+/* 2 · Diagrama de dos puntos */
+.chart{max-width:34rem}
+.chart svg{display:block;width:100%;height:auto}
+.c-grid{stroke:var(--rule);stroke-width:1.5;stroke-dasharray:3 6}
+.c-axis{stroke:var(--ink);stroke-width:3;stroke-linecap:round}
+.c-tick{font-family:var(--f-note);font-size:16px;fill:var(--ink-soft)}
+.c-area{fill:var(--sky)}
+.c-line{stroke:var(--blue);stroke-width:4.5;stroke-linecap:round}
+.c-bar{fill:var(--sky-strong);stroke:var(--ink);stroke-width:3;stroke-linejoin:round}
+.c-guide{stroke:var(--ink-soft);stroke-width:1.5;stroke-dasharray:2 7;stroke-linecap:round}
+.c-x{font-family:var(--f-note);fill:var(--ink)}
+.c-val{font-family:var(--f-sketch);font-size:22px;fill:var(--ink)}
+.c-val.az{fill:var(--blue)}
+.c-dot{fill:var(--ink)}
+.c-hit{fill:var(--paper);fill-opacity:0;cursor:ns-resize;touch-action:none}
+.c-knob-sh{fill:var(--ink)}
+.c-knob{fill:var(--paper);stroke:var(--ink);stroke-width:3}
+.c-knob-in{fill:var(--blue)}
+#q2-handle{outline:none;cursor:ns-resize;touch-action:none}
+#q2-handle:focus-visible .c-knob{stroke:var(--blue);stroke-width:5}
+
+/* 3 · Pirámide */
+.pyr{display:flex;flex-direction:column;gap:14px;min-width:0}
+.pyr-title{margin:0;font-family:var(--f-sketch);font-weight:700;text-transform:uppercase;font-size:clamp(1.45rem,4.6vw,3.3rem);line-height:1.05;letter-spacing:.01em}
+.pyr-sub{margin:0;font-family:var(--f-note);font-size:clamp(1.02rem,2vw,1.5rem);color:var(--ink-soft);line-height:1.25}
+.pyr-up{margin:0;font-family:var(--f-sketch);font-size:1.1rem;color:var(--blue)}
+.pyr svg{display:block;width:100%;height:auto}
+.band{fill:var(--f);stroke:var(--ink);stroke-width:4.5;stroke-linejoin:round;cursor:pointer;outline:none}
+.band:hover{fill:var(--h)}
+.band[aria-checked="true"]{fill:var(--o)}
+.band:focus-visible{stroke:var(--blue);stroke-width:8}
+.pyr-sel{fill:none;stroke:var(--ink);stroke-width:9;stroke-linejoin:round;pointer-events:none}
+.pyr-labels,.pyr-notes,.pyr-side,.pyr-badge{pointer-events:none}
+.lab{font-family:var(--f-sketch);font-size:40px;fill:var(--ink)}
+.note{font-family:var(--f-note);font-style:italic;font-size:23px;fill:var(--ink)}
+.con{fill:none;stroke-width:2.5;stroke-linecap:round}
+.s-cap{font-family:var(--f-sketch);font-size:31px;fill:var(--ink)}
+.s-cap.az{fill:var(--blue)}
+.s-arrow{fill:none;stroke:var(--blue);stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
+.s-sub{fill:none;stroke:var(--blue);stroke-width:3.5;stroke-linecap:round}
+.s-dots{fill:none;stroke:var(--blue);stroke-width:4;stroke-linecap:round;stroke-dasharray:.1 14}
+.ik{stroke:var(--ink);stroke-width:3.5;stroke-linejoin:round;stroke-linecap:round}
+.pp{fill:var(--paper)}
+.dot{fill:var(--ink)}
+.badge-c{fill:var(--blue);stroke:var(--ink);stroke-width:3.5}
+.badge-k{fill:none;stroke:var(--paper);stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round}
+.pyr-legend{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,19rem),1fr));gap:14px 22px}
+.pyr-legend li{border-left:5px solid var(--c);padding-left:12px;min-width:0;display:flex;flex-direction:column;gap:2px}
+.pyr-legend strong{font-family:var(--f-sketch);font-weight:400;font-size:1.2rem;line-height:1.2}
+.pyr-legend span{font-size:1rem;line-height:1.4;color:var(--ink-soft)}
+.pyr-legend li.on strong{color:var(--blue)}
+@media (max-width:1079px){
+  .pyr-side,.pyr-notes{display:none}
+  .pyr svg{max-width:640px}
+}
+@media (min-width:1080px){
+  .pyr-legend,.pyr-up{display:none}
+}
+
+/* 4 y 6 · Botones cuadrados */
+.tile{appearance:none;-webkit-appearance:none;margin:0;color:var(--ink);background:var(--t,var(--paper));border:3px solid var(--ink);border-radius:clamp(12px,2.4vw,20px);cursor:pointer;position:relative;display:grid;place-items:center;align-content:center;text-align:center;padding:4px;min-width:0;aspect-ratio:1;font-family:var(--f-note);line-height:1.05;overflow-wrap:anywhere}
+.tile:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink)}
+.tile.on{background:var(--ts,var(--sky-strong));transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+.tile.on::after{content:"✓";position:absolute;top:-10px;right:-10px;width:26px;height:26px;border-radius:50%;background:var(--blue);color:var(--paper);border:2.5px solid var(--ink);display:grid;place-items:center;font:700 15px/1 var(--f-body)}
+.tile:focus-visible,.send:focus-visible,.ghost:focus-visible{outline:3px solid var(--blue);outline-offset:4px}
+.tile small{display:block;font-size:.72em}
+.mosaic{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(6px,1.6vw,14px);max-width:40rem}
+.mosaic .tile{font-size:clamp(.74rem,2.7vw,1.3rem)}
+.tile.otra{border-style:dashed}
+.tile.otra.on{border-style:solid}
+.yn{display:flex;gap:16px}
+.yn .tile{width:clamp(96px,22vw,128px);font-family:var(--f-sketch);font-size:clamp(1.8rem,5vw,2.4rem)}
+
+/* 5 y 7 · Campos de texto */
+.field{font:inherit;font-size:1.2rem;color:var(--ink);background:var(--paper);border:0;border-bottom:3px solid var(--ink);border-radius:0;padding:10px 2px;width:100%;max-width:30rem}
+.field::placeholder{color:var(--ink-soft);opacity:.75}
+.field:focus-visible{outline:none;border-bottom-color:var(--blue);box-shadow:0 3px 0 var(--blue)}
+
+/* Envío y cierre */
+.envio{display:flex;flex-direction:column;gap:16px;align-items:flex-start}
+.send{appearance:none;-webkit-appearance:none;font-family:var(--f-display);font-weight:700;font-size:1.3rem;color:var(--paper);background:var(--ink);border:3px solid var(--ink);border-radius:999px;padding:14px 30px;cursor:pointer;box-shadow:5px 5px 0 var(--blue)}
+.send:hover{transform:translate(-1px,-1px);box-shadow:7px 7px 0 var(--blue)}
+.aviso{margin:0;font-size:1rem;color:var(--ink-soft);max-width:58ch}
+.aviso b{font-family:var(--f-sketch);font-weight:400;color:var(--ink);border:2px solid var(--ink);border-radius:8px;padding:0 8px;margin-right:6px;white-space:nowrap}
+.cierre{border:3px solid var(--ink);border-radius:20px;padding:clamp(18px,3vw,32px);max-width:46rem;display:flex;flex-direction:column;gap:16px;box-shadow:6px 6px 0 var(--sky-strong)}
+.cierre h2{margin:0;font-family:var(--f-display);font-size:clamp(1.5rem,3vw,2rem);line-height:1.15}
+.cierre p{margin:0}
+.cierre dl{margin:0;display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);gap:8px 18px}
+.cierre dt{color:var(--ink-soft)}
+.cierre dd{margin:0;font-weight:700;overflow-wrap:anywhere}
+@media (max-width:520px){.cierre dl{grid-template-columns:1fr;gap:2px}.cierre dd{margin-bottom:8px}}
+.ghost{appearance:none;-webkit-appearance:none;font:inherit;font-weight:700;color:var(--ink);background:var(--paper);border:3px solid var(--ink);border-radius:999px;padding:10px 22px;cursor:pointer;align-self:flex-start}
+.ghost:hover{background:var(--sky)}
+.copia{font:inherit;font-size:.95rem;color:var(--ink);background:var(--paper);border:2px solid var(--ink);border-radius:10px;padding:10px;width:100%;min-height:11em}
+@media (prefers-reduced-motion:no-preference){
+  .tile,.send{transition:transform .12s ease,box-shadow .12s ease,background-color .12s ease}
+  .band{transition:fill .12s ease}
+}
+.send:disabled{opacity:.6;cursor:progress;transform:none;box-shadow:5px 5px 0 var(--blue)}
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="hero">
+    <p class="byline">POR FEDERICO FROS CAMPELO</p>
+    <h1>Liderazgo <span class="mark">Aumentado<svg viewBox="0 0 300 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3,10 C45,3 85,14 130,8 S220,4 297,9"/></svg></span> con Inteligencia Artificial</h1>
+    <div class="intro">
+      <p>Hola! Cómo estás? Ya me conocerás aunque sea de nombre, anticipando el proceso de transformación que vamos a hacer juntos. Soy Federico Fros Campelo, el creador de este programa, su director académico y profe.</p>
+      <p>Me gustaría que me orientes con algunos datos que a mí me van a servir para que el programa esté ajustado lo más a medida posible para vos y los demás participantes de esta edición.</p>
+      <p class="pacto">Te garantizo que la información que me brindes aquí sobre vos es confidencial. El tratamiento que voy a hacer de la misma es a meros efectos de obtener la “estadística poblacional” de ustedes como participantes y anticiparme a qué tipo de ejercicios van a ser los mejores según el caso. Ningún dato individual y singularizado será compartido con nadie.</p>
+    </div>
+  </header>
+
+  <form class="form" id="relevamiento" novalidate>
+
+    <section class="q" id="p1" aria-labelledby="p1-t">
+      <div class="q-head"><span class="q-n" aria-hidden="true">1.</span>
+        <h2 class="q-t" id="p1-t">Subjetivamente, ¿qué grado de expertise sentís que tenés hoy en herramientas de Inteligencia Artificial?</h2></div>
+      <div class="meter" id="q1-meter" role="slider" tabindex="0" aria-labelledby="p1-t" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="0%">
+        <div class="meter-track">
+          <div class="meter-clip"><div class="meter-fill"></div></div>
+          <div class="meter-thumb"><span class="meter-val">0%</span></div>
+        </div>
+        <div class="meter-scale" aria-hidden="true">
+          <span style="left:0%">0%</span><span style="left:25%">25%</span><span style="left:50%">50%</span><span style="left:75%">75%</span><span style="left:100%">100%</span>
+        </div>
+      </div>
+      <p class="q-hint">Hacé click sobre la barra o arrastrá el indicador. Si lo dejás donde está, queda en 0%.</p>
+    </section>
+
+    <section class="q" id="p2" aria-labelledby="p2-t">
+      <div class="q-head"><span class="q-n" aria-hidden="true">2.</span>
+        <h2 class="q-t" id="p2-t">¿Y a principios de este año 2026? ¿Qué expertise tenías?</h2></div>
+      <p class="q-hint">(Me interesa saber también cuánto considerás que aprendiste, si acaso este año ya te dedicaste a hacerlo)</p>
+      <div class="chart">
+        <svg id="q2-svg" viewBox="0 0 480 362" aria-hidden="false">
+          <g id="c-grid"></g>
+          <polygon class="c-area" id="c-area" points="175,300 175,300 375,300 375,300"/>
+          <line class="c-guide" x1="175" y1="50" x2="175" y2="300"/>
+          <rect class="c-bar" id="c-bar" x="350" y="300" width="50" height="0"/>
+          <line class="c-line" id="c-line" x1="175" y1="300" x2="375" y2="300"/>
+          <line class="c-axis" x1="70" y1="40" x2="70" y2="300"/>
+          <line class="c-axis" x1="70" y1="300" x2="452" y2="300"/>
+          <circle class="c-dot" id="c-dotR" cx="375" cy="300" r="6"/>
+          <text class="c-val" id="c-valR" x="410" y="307">0%</text>
+          <text class="c-x" x="375" y="340" text-anchor="middle" font-size="19">hoy</text>
+          <text class="c-x" x="175" y="340" text-anchor="middle" font-size="15">principios de 2026</text>
+          <text class="c-val az" id="c-valL" x="148" y="307" text-anchor="end">0%</text>
+          <g id="q2-handle" role="slider" tabindex="0" aria-orientation="vertical" aria-label="Expertise a principios de 2026" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="0%">
+            <rect class="c-hit" x="112" y="22" width="126" height="300"/>
+            <g id="c-knob" transform="translate(175,300)">
+              <circle class="c-knob-sh" cx="3" cy="3" r="17"/>
+              <circle class="c-knob" r="17"/>
+              <circle class="c-knob-in" r="8"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <p class="q-out" id="q2-out" aria-live="polite">Principios de 2026: 0% → Hoy: 0%</p>
+      <p class="q-hint">Mové hacia arriba el punto de la izquierda, con click o arrastrándolo. La columna de la derecha es lo que marcaste en la pregunta 1 y no se mueve desde acá.</p>
+    </section>
+
+    <section class="q" id="p3" style="--bar:var(--blue)" aria-labelledby="p3-t">
+      <div class="q-head"><span class="q-n" aria-hidden="true">3.</span>
+        <h2 class="q-t" id="p3-t">Por favor, mirá este diagrama. Si tuvieras que indicar sobre el mismo en qué nivel estás instalado hoy día en el uso de la I.A. ¿cuál indicás?</h2></div>
+      <p class="q-hint">Podés hacer click dentro de la misma pirámide, nivel correspondiente</p>
+      <div class="pyr">
+        <p class="pyr-title">Niveles de uso de la I.A. para líderes</p>
+        <p class="pyr-sub">De lo más básico y popular hacia usos más estratégicos e ingeniosos</p>
+        <p class="pyr-up" aria-hidden="true">↑ Más valor estratégico · Mayor sofisticación</p>
+        <svg id="pyr-svg" viewBox="0 0 1580 730"></svg>
+        <p class="q-out" id="nivel-out" aria-live="polite">Todavía no elegiste un nivel.</p>
+        <ul class="pyr-legend" id="pyr-legend"></ul>
+      </div>
+      <p class="q-err" id="p3-err" hidden>Falta elegir un nivel: hacé click sobre la pirámide.</p>
+    </section>
+
+    <section class="q" id="p4" style="--bar:var(--orange)" aria-labelledby="p4-t">
+      <div class="q-head"><span class="q-n" aria-hidden="true">4.</span>
+        <h2 class="q-t" id="p4-t">¿Hay alguna de estas herramientas con las que interactúes con frecuencia, independientemente de si tu nivel es básico o elevado?</h2></div>
+      <div class="mosaic" id="mosaico" role="group" aria-labelledby="p4-t">
+        <button type="button" class="tile" id="h-chatgpt" data-k="ChatGPT" aria-pressed="false" style="--t:var(--lav);--ts:#C8BAF3">ChatGPT</button>
+        <button type="button" class="tile" id="h-gemini" data-k="Gemini" aria-pressed="false" style="--t:var(--peach);--ts:#F8C6A2">Gemini</button>
+        <button type="button" class="tile" id="h-claude" data-k="Claude" aria-pressed="false" style="--t:var(--lemon);--ts:#F4E07A">Claude</button>
+        <button type="button" class="tile" id="h-copilot" data-k="Copilot (Microsoft)" aria-pressed="false" style="--t:var(--mint);--ts:#BCE2A2"><span>Copilot<small>(Microsoft)</small></span></button>
+        <button type="button" class="tile" id="h-deepseek" data-k="DeepSeek" aria-pressed="false" style="--t:var(--sky);--ts:#AED3F5">DeepSeek</button>
+        <button type="button" class="tile" id="h-grok" data-k="Grok" aria-pressed="false" style="--t:var(--sky);--ts:#AED3F5">Grok</button>
+        <button type="button" class="tile" id="h-gumloop" data-k="GumLoop" aria-pressed="false" style="--t:var(--mint);--ts:#BCE2A2">GumLoop</button>
+        <button type="button" class="tile" id="h-elevenlabs" data-k="ElevenLabs" aria-pressed="false" style="--t:var(--lemon);--ts:#F4E07A">ElevenLabs</button>
+        <button type="button" class="tile" id="h-heygen" data-k="HeyGen" aria-pressed="false" style="--t:var(--peach);--ts:#F8C6A2">HeyGen</button>
+        <button type="button" class="tile otra" id="h-otra" data-k="Otra" aria-pressed="false" style="--ts:#C8BAF3">Otra</button>
+      </div>
+      <p class="q-hint">Podés marcar todas las que uses, o ninguna.</p>
+    </section>
+
+    <section class="q" id="p5" style="--bar:var(--orange)" aria-labelledby="p5-t">
+      <div class="q-head"><span class="q-n" aria-hidden="true">5.</span>
+        <h2 class="q-t" id="p5-t">Si arriba indicaste “Otra”, ¿cuál?</h2></div>
+      <input class="field" id="otra" type="text" autocomplete="off" aria-labelledby="p5-t" placeholder="Escribí acá el nombre de la herramienta">
+      <p class="q-err" id="p5-err" hidden>Marcaste “Otra”: contame cuál.</p>
+    </section>
+
+    <section class="q" id="p6" style="--bar:var(--turq)" aria-labelledby="p6-t">
+      <div class="q-head"><span class="q-n" aria-hidden="true">6.</span>
+        <h2 class="q-t" id="p6-t">¿Trabajás en Sistemas/IT?</h2></div>
+      <div class="yn" id="it" role="radiogroup" aria-labelledby="p6-t">
+        <button type="button" class="tile" id="it-si" role="radio" aria-checked="false" data-v="SI" style="--ts:#BCE2A2">SI</button>
+        <button type="button" class="tile" id="it-no" role="radio" aria-checked="false" data-v="NO" style="--ts:#F8C6A2">NO</button>
+      </div>
+      <p class="q-err" id="p6-err" hidden>Falta esta respuesta: elegí SI o NO.</p>
+    </section>
+
+    <section class="q" id="p7" style="--bar:var(--turq)" aria-labelledby="p7-t">
+      <div class="q-head"><span class="q-n" aria-hidden="true">7.</span>
+        <h2 class="q-t" id="p7-t">¿Cómo te llamás?</h2></div>
+      <input class="field" id="nombre" type="text" autocomplete="name" aria-labelledby="p7-t" placeholder="Tu nombre y apellido">
+      <p class="q-err" id="p7-err" hidden>Falta tu nombre.</p>
+    </section>
+
+    <div class="envio" id="envio">
+      <button type="submit" class="send" id="enviar">Enviar mis respuestas</button>
+      <p class="aviso" id="envio-nota">Al enviar, tus respuestas me llegan directamente por correo.</p>
+      <p class="q-err" id="envio-err" role="alert" hidden></p>
+      <button type="button" class="ghost" id="copiar-fallo" hidden>Copiar resumen de mis respuestas</button>
+      <p class="aviso" id="copiar-fallo-msg" hidden></p>
+    </div>
+
+    <section class="cierre" id="cierre" hidden aria-live="polite">
+      <h2 id="cierre-t">Gracias.</h2>
+      <p>Tus respuestas se enviaron correctamente. Este es el resumen:</p>
+      <dl id="cierre-dl"></dl>
+      <button type="button" class="ghost" id="copiar">Copiar resumen</button>
+      <p class="aviso" id="copiar-msg" hidden></p>
+      <textarea class="copia" id="copia" readonly hidden aria-label="Resumen de tus respuestas"></textarea>
+    </section>
+  </form>
+</main>
+
+<script>
+(function(){
+'use strict';
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var clamp=function(v,a,b){return Math.min(b,Math.max(a,v))};
+
+var state={q1:0,q2:0,nivel:null,herr:[],otra:'',it:null,nombre:'',enviado:false};
+
+/* ---------- Control deslizante genérico (click, arrastre y teclado) ---------- */
+function slider(el,get,set,fromEvent){
+  var drag=false;
+  el.addEventListener('pointerdown',function(e){
+    if(e.pointerType==='mouse'&&e.button!==0)return;
+    drag=true;
+    try{el.setPointerCapture(e.pointerId)}catch(_){}
+    set(fromEvent(e));
+    try{el.focus({preventScroll:true})}catch(_){}
+    e.preventDefault();
+  });
+  el.addEventListener('pointermove',function(e){if(drag)set(fromEvent(e))});
+  var end=function(){drag=false};
+  el.addEventListener('pointerup',end);
+  el.addEventListener('pointercancel',end);
+  el.addEventListener('lostpointercapture',end);
+  el.addEventListener('touchstart',function(e){e.preventDefault()},{passive:false});
+  el.addEventListener('keydown',function(e){
+    var k=e.key,v=get();
+    if(k==='ArrowRight'||k==='ArrowUp')v+=1;
+    else if(k==='ArrowLeft'||k==='ArrowDown')v-=1;
+    else if(k==='PageUp')v+=10;
+    else if(k==='PageDown')v-=10;
+    else if(k==='Home')v=0;
+    else if(k==='End')v=100;
+    else return;
+    e.preventDefault();
+    set(clamp(v,0,100));
+  });
+}
+
+/* ---------- 1 · Barra ---------- */
+var meter=$('#q1-meter'),track=$('.meter-track',meter),mfill=$('.meter-fill',meter),mthumb=$('.meter-thumb',meter),mval=$('.meter-val',meter);
+function drawQ1(){
+  mfill.style.width=state.q1+'%';
+  mthumb.style.left=state.q1+'%';
+  mval.textContent=state.q1+'%';
+  meter.setAttribute('aria-valuenow',state.q1);
+  meter.setAttribute('aria-valuetext',state.q1+'%');
+}
+slider(meter,function(){return state.q1},function(v){
+  if(v===state.q1)return; state.q1=v; drawQ1(); drawQ2(); changed();
+},function(e){
+  var r=track.getBoundingClientRect();
+  return Math.round(clamp((e.clientX-r.left)/r.width,0,1)*100);
+});
+
+/* ---------- 2 · Diagrama ---------- */
+var C={xL:175,xR:375,y0:300,k:2.5,vbH:362};
+var cy=function(v){return C.y0-v*C.k};
+(function(){
+  var g=$('#c-grid'),s='';
+  [0,25,50,75,100].forEach(function(v){
+    var y=cy(v);
+    if(v>0)s+='<line class="c-grid" x1="70" y1="'+y+'" x2="452" y2="'+y+'"/>';
+    s+='<line class="c-axis" x1="62" y1="'+y+'" x2="70" y2="'+y+'"/>';
+    s+='<text class="c-tick" x="55" y="'+(y+5)+'" text-anchor="end">'+v+'%</text>';
+  });
+  g.innerHTML=s;
+})();
+var q2svg=$('#q2-svg'),q2h=$('#q2-handle');
+function drawQ2(){
+  var yL=cy(state.q2),yR=cy(state.q1);
+  $('#c-area').setAttribute('points',C.xL+','+C.y0+' '+C.xL+','+yL+' '+C.xR+','+yR+' '+C.xR+','+C.y0);
+  var ln=$('#c-line'); ln.setAttribute('y1',yL); ln.setAttribute('y2',yR);
+  var bar=$('#c-bar'); bar.setAttribute('y',yR); bar.setAttribute('height',C.y0-yR);
+  $('#c-dotR').setAttribute('cy',yR);
+  var vr=$('#c-valR'); vr.setAttribute('y',yR+7); vr.textContent=state.q1+'%';
+  $('#c-knob').setAttribute('transform','translate('+C.xL+','+yL+')');
+  var vl=$('#c-valL'); vl.setAttribute('y',yL+7); vl.textContent=state.q2+'%';
+  q2h.setAttribute('aria-valuenow',state.q2);
+  q2h.setAttribute('aria-valuetext',state.q2+'%');
+  var d=state.q1-state.q2;
+  var dif=d===0?'sin cambio':(d>0?'+'+d:'−'+Math.abs(d))+' '+(Math.abs(d)===1?'punto':'puntos');
+  $('#q2-out').textContent='Principios de 2026: '+state.q2+'% → Hoy: '+state.q1+'% · '+dif;
+}
+slider(q2h,function(){return state.q2},function(v){
+  if(v===state.q2)return; state.q2=v; drawQ2(); changed();
+},function(e){
+  var r=q2svg.getBoundingClientRect();
+  var y=(e.clientY-r.top)*(C.vbH/r.height);
+  return Math.round(clamp((C.y0-y)/C.k,0,100));
+});
+
+/* ---------- 3 · Pirámide ---------- */
+var NIVELES=[ /* de arriba hacia abajo, como en el diagrama */
+  {n:7,l:['Agentes para','el Equipo'],f:'#E9E4FB',h:'#DDD5F8',o:'#C8BAF3',c:'#7B3FB8',tx:[472,84,520,121],nx:760,ny:37,cy:52,
+   nota:['Nuestra capacidad (como líderes y en equipo) se exponencia. Diseñamos agentes,','importamos otros, y comenzamos a orquestar. Coexistimos entidades humanas con','“entidades IA” de forma equivalente.']},
+  {n:6,l:['Workflows y','Automatización'],f:'#FCE9DC',h:'#FADBC6',o:'#F8C6A2',c:'#E0261B',tx:[477,184,508,221],nx:803,ny:138,cy:171,
+   nota:['Con la IA ya dejamos de resolver cosas puntuales para estar integrados todo el','tiempo con procesos nuevos. Las rutinas son estables y se exige reingeniería de','procesos.']},
+  {n:5,l:['Decisiones','Asistidas'],f:'#FBF4CC',h:'#F8ECA9',o:'#F4E07A',c:'#F2A07B',tx:[468,283,518,320],nx:840,ny:239,cy:272,
+   nota:['Aquí un líder ya usa la IA para modelizar secuencias de decisión, crear','lógicas nuevas de pensamiento, comparar escenarios complejos e incluso','diseñar interfaces de decisión con pares/empleados/clientes (sin programar)']},
+  {n:4,l:['Business','Templates'],f:'#E6F2DD',h:'#D5EBC6',o:'#BCE2A2',c:'#3DBB4F',tx:[427,390,483,428],nx:877,ny:350,cy:366,
+   nota:['Este es el nivel de los Artefactos bien estructurados. Obtenemos','diseños y presentaciones con estilo determinado, business plans a','medida, tableros con canvas exigentes y otros formatos de gestión']},
+  {n:3,l:['Deep Research'],f:'#DDEBF9',h:'#C9E0F7',o:'#AED3F5',c:'#4FC3F0',tx:[402,501],nx:900,ny:452,cy:473,
+   nota:['Dándole un mayor contexto y haciendo un más fino prompt','engineering, aquí hacemos investigación más profunda y obtenemos un','contraste contundente de información de negocio/técnica/académica.']},
+  {n:2,l:['Productividad Básica'],f:'#FCF3CF',h:'#F9EAAB',o:'#F4E07A',c:'#F2957A',tx:[373,583],nx:933,ny:555,cy:573,
+   nota:['Independientemente de con qué herramienta, aquí ya empezamos','a sentir el ahorro de tiempo: la IA nos resume correos, nos','compara planillas, nos redacta informes, hace rankings o nos','ordena datos.']},
+  {n:1,l:['Diálogo Orientativo (Chat)'],f:'#ECE8FB',h:'#DFD8F8',o:'#C8BAF3',c:'#D65BC9',tx:[350,665],nx:961,ny:668,cy:663,
+   nota:['Es el uso más difundido hoy día dentro y fuera de las','organizaciones: obtener respuestas, orientación, ideas,','explicaciones.']}
+];
+var Y=[38,139,238,339,446,528,610,692];
+var xl=function(y){return 390-(238/654)*(y-38)};
+var xr=function(y){return 722+(196/654)*(y-38)};
+function pts(i){
+  var a=Y[i],b=Y[i+1];
+  return [[xl(a),a],[xr(a),a],[xr(b),b],[xl(b),b]].map(function(p){return p[0].toFixed(1)+','+p[1]}).join(' ');
+}
+function gear(ro,ri,n){
+  var st=Math.PI*2/n,d='';
+  for(var k=0;k<n;k++){
+    var a=k*st;
+    [[ri,a-st*.28],[ro,a-st*.15],[ro,a+st*.15],[ri,a+st*.28]].forEach(function(q,j){
+      d+=(k===0&&j===0?'M':'L')+(q[0]*Math.cos(q[1])).toFixed(1)+','+(q[0]*Math.sin(q[1])).toFixed(1)+' ';
+    });
+  }
+  return d+'Z';
+}
+function star(R,r){
+  var d='';
+  for(var i=0;i<10;i++){
+    var a=-Math.PI/2+i*Math.PI/5,q=i%2?r:R;
+    d+=(i?'L':'M')+(q*Math.cos(a)).toFixed(1)+','+(q*Math.sin(a)).toFixed(1)+' ';
+  }
+  return d+'Z';
+}
+var ARROWS='M0,34 V-28 M-12,-16 L0,-30 L12,-16 M0,6 H-30 M-18,-6 L-32,6 L-18,18 M0,6 H30 M18,-6 L32,6 L18,18';
+var ICONOS={
+  7:'<g transform="translate(422,88)"><path d="M0,-22 L-24,18 L24,18 Z" fill="none" stroke="#8A3FC0" stroke-width="4" stroke-linejoin="round"/>'+
+    [[0,-22],[-24,18],[24,18]].map(function(p){return '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="10" fill="#F7E3FA" stroke="#8A3FC0" stroke-width="4"/><circle cx="'+p[0]+'" cy="'+p[1]+'" r="3.5" fill="#D94BC8"/>'}).join('')+'</g>',
+  6:'<g transform="translate(408,188)"><rect class="ik" x="-36" y="-28" width="16" height="16" rx="3" fill="#F7C63E"/>'+
+    '<path class="ik" fill="none" d="M-14,-20 H32 V-4 M0,-27 L8,-20 L0,-13"/><path class="ik" fill="none" d="M-28,-6 V24 H-14"/>'+
+    '<g transform="translate(4,22)"><path class="ik" fill="#F0862F" d="'+gear(15,11,8)+'"/><circle class="ik pp" r="4.5"/></g>'+
+    '<path class="ik" fill="none" d="M22,22 H32 V12"/><rect class="ik" x="26" y="-2" width="12" height="12" rx="2.5" fill="#F7C63E"/></g>',
+  5:'<g transform="translate(383,288)" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="'+ARROWS+'" stroke="#111114" stroke-width="10.5"/><path d="'+ARROWS+'" stroke="#43BF4D" stroke-width="5"/></g>',
+  4:'<g transform="translate(348,393)"><path class="ik pp" d="M-24,-34 H10 L26,-18 V34 H-24 Z"/><path class="ik" fill="none" d="M10,-34 V-18 H26"/>'+
+    '<path transform="translate(0,9)" d="'+star(13,5.5)+'" fill="#43BF4D" stroke="#1E7A2A" stroke-width="2.2" stroke-linejoin="round"/></g>',
+  3:'<g transform="translate(318,487)"><circle cx="-6" cy="-6" r="17" fill="#EEF6FE" stroke="#1F6FD0" stroke-width="5.5"/><path d="M8,8 L25,25" fill="none" stroke="#174EA6" stroke-width="8" stroke-linecap="round"/></g>',
+  2:'<g transform="translate(277,570)"><path class="ik" fill="#F7C63E" d="'+gear(27,20,8)+'"/><circle class="ik pp" r="8.5"/></g>',
+  1:'<g transform="translate(253,652)"><path class="ik" fill="#F6F3FE" d="M-30,-2 C-30,-20 -14,-26 2,-26 C20,-26 32,-16 32,-3 C32,11 19,20 2,20 C-3,20 -8,19 -12,18 L-27,27 L-23,12 C-28,8 -30,3 -30,-2 Z"/>'+
+    '<circle class="dot" cx="-11" cy="-3" r="3.2"/><circle class="dot" cx="1" cy="-3" r="3.2"/><circle class="dot" cx="13" cy="-3" r="3.2"/></g>'
+};
+var psvg=$('#pyr-svg');
+(function build(){
+  var s='<defs><filter id="wob" x="-4%" y="-4%" width="108%" height="108%"><feTurbulence type="fractalNoise" baseFrequency="0.014" numOctaves="2" seed="11" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="6" xChannelSelector="R" yChannelSelector="G"/></filter></defs>';
+  s+='<g class="pyr-side" aria-hidden="true"><g filter="url(#wob)"><path class="s-arrow" d="M150,585 Q185,330 238,72"/><path class="s-arrow" d="M203,106 L238,70 L259,114"/></g>'+
+     '<text class="s-cap" x="80" y="222" text-anchor="middle">Más Valor</text><text class="s-cap az" x="80" y="258" text-anchor="middle">Estratégico</text><path class="s-sub" d="M10,277 Q80,267 150,272"/>'+
+     '<path class="s-dots" d="M14,336 H146"/>'+
+     '<text class="s-cap" x="80" y="380" text-anchor="middle">Mayor</text><text class="s-cap az" x="80" y="416" text-anchor="middle">Sofisticación</text><path class="s-sub" d="M6,436 Q78,426 154,431"/></g>';
+  s+='<g class="pyr-bands" filter="url(#wob)" role="radiogroup" aria-label="Niveles de uso de la I.A. para líderes">';
+  NIVELES.forEach(function(L,i){
+    s+='<polygon class="band" id="nivel-'+L.n+'" role="radio" tabindex="0" aria-checked="false" aria-label="Nivel '+L.n+': '+L.l.join(' ')+'" data-n="'+L.n+'" points="'+pts(i)+'" style="--f:'+L.f+';--h:'+L.h+';--o:'+L.o+'"/>';
+  });
+  s+='</g><polygon class="pyr-sel" id="pyr-sel" filter="url(#wob)" points="0,0" visibility="hidden"/>';
+  s+='<g class="pyr-labels" aria-hidden="true">';
+  NIVELES.forEach(function(L){
+    s+=ICONOS[L.n];
+    s+='<text class="lab" x="'+L.tx[0]+'" y="'+L.tx[1]+'" data-lim="'+(xr(L.tx[1])-30).toFixed(0)+'">'+L.n+'. '+L.l[0]+'</text>';
+    if(L.l[1])s+='<text class="lab" x="'+L.tx[2]+'" y="'+L.tx[3]+'" data-lim="'+(xr(L.tx[3])-30).toFixed(0)+'">'+L.l[1]+'</text>';
+  });
+  s+='</g><g class="pyr-notes">';
+  NIVELES.forEach(function(L){
+    s+='<path class="con" stroke="'+L.c+'" d="M'+(xr(L.cy)+3).toFixed(1)+','+L.cy+' H'+(L.nx-12)+'"/>';
+    L.nota.forEach(function(t,j){s+='<text class="note" x="'+L.nx+'" y="'+(L.ny+j*23)+'">'+t+'</text>'});
+  });
+  s+='</g><g class="pyr-badge" id="pyr-badge" visibility="hidden" aria-hidden="true"><circle class="badge-c" r="18"/><path class="badge-k" d="M-8,0 L-2,7 L9,-7"/></g>';
+  psvg.innerHTML=s;
+
+  var lg=$('#pyr-legend');
+  NIVELES.forEach(function(L){
+    var li=document.createElement('li'); li.style.setProperty('--c',L.c); li.dataset.n=L.n;
+    var st=document.createElement('strong'); st.textContent=L.n+'. '+L.l.join(' ');
+    var sp=document.createElement('span'); sp.textContent=L.nota.join(' ');
+    li.appendChild(st); li.appendChild(sp); lg.appendChild(li);
+  });
+})();
+
+/* Ajuste de textos del diagrama para que ninguna tipografía de reemplazo se salga de su lugar */
+function fit(){
+  $$('.lab',psvg).forEach(function(t){
+    t.style.fontSize='';
+    var w=t.getComputedTextLength(),x=+t.getAttribute('x'),lim=+t.dataset.lim;
+    if(w>0&&x+w>lim)t.style.fontSize=(40*(lim-x)/w).toFixed(1)+'px';
+  });
+  var notes=$$('.note',psvg),k=1;
+  notes.forEach(function(t){t.style.fontSize=''});
+  notes.forEach(function(t){
+    var w=t.getComputedTextLength(),x=+t.getAttribute('x');
+    if(w>0)k=Math.min(k,(1568-x)/w);
+  });
+  if(k<1)notes.forEach(function(t){t.style.fontSize=(23*k).toFixed(1)+'px'});
+  $$('.s-cap',psvg).forEach(function(t){
+    t.style.fontSize='';
+    var w=t.getComputedTextLength();
+    if(w>150)t.style.fontSize=(31*150/w).toFixed(1)+'px';
+  });
+}
+var mq=window.matchMedia('(max-width:1079px)');
+function setVB(){
+  psvg.setAttribute('viewBox',mq.matches?'140 14 800 696':'0 0 1580 730');
+  fit();
+}
+if(mq.addEventListener)mq.addEventListener('change',setVB);else if(mq.addListener)mq.addListener(setVB);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
+
+var bands=$$('.band',psvg);
+function drawNivel(){
+  bands.forEach(function(b){b.setAttribute('aria-checked',String(+b.dataset.n===state.nivel))});
+  $$('#pyr-legend li').forEach(function(li){li.classList.toggle('on',+li.dataset.n===state.nivel)});
+  var sel=$('#pyr-sel'),badge=$('#pyr-badge'),out=$('#nivel-out');
+  if(state.nivel){
+    var i=7-state.nivel,L=NIVELES[i];
+    sel.setAttribute('points',pts(i)); sel.removeAttribute('visibility');
+    badge.setAttribute('transform','translate('+xr(L.cy).toFixed(1)+','+L.cy+')'); badge.removeAttribute('visibility');
+    out.textContent='Elegiste el nivel '+L.n+': '+L.l.join(' ')+'.';
+  }else{
+    sel.setAttribute('visibility','hidden'); badge.setAttribute('visibility','hidden');
+    out.textContent='Todavía no elegiste un nivel.';
+  }
+}
+bands.forEach(function(b){
+  var pick=function(){state.nivel=+b.dataset.n; drawNivel(); changed()};
+  b.addEventListener('click',pick);
+  b.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}});
+});
+
+/* ---------- 4 y 5 · Herramientas ---------- */
+var tiles=$$('#mosaico .tile'),otra=$('#otra');
+function drawHerr(){
+  tiles.forEach(function(b){
+    var on=state.herr.indexOf(b.dataset.k)>=0;
+    b.classList.toggle('on',on); b.setAttribute('aria-pressed',String(on));
+  });
+}
+tiles.forEach(function(b){
+  b.addEventListener('click',function(){
+    var k=b.dataset.k,i=state.herr.indexOf(k);
+    if(i>=0)state.herr.splice(i,1);else state.herr.push(k);
+    drawHerr(); changed();
+  });
+});
+otra.addEventListener('input',function(){
+  state.otra=otra.value;
+  if(state.otra.trim()&&state.herr.indexOf('Otra')<0){state.herr.push('Otra'); drawHerr()}
+  changed();
+});
+
+/* ---------- 6 · Sistemas/IT ---------- */
+var yn=$$('#it .tile');
+function drawIT(){
+  yn.forEach(function(b){
+    var on=b.dataset.v===state.it;
+    b.classList.toggle('on',on); b.setAttribute('aria-checked',String(on));
+  });
+}
+yn.forEach(function(b){b.addEventListener('click',function(){state.it=b.dataset.v; drawIT(); changed()})});
+
+/* ---------- 7 · Nombre ---------- */
+var nombre=$('#nombre');
+nombre.addEventListener('input',function(){state.nombre=nombre.value; changed()});
+
+/* ---------- Envío ---------- */
+var ORDEN=['ChatGPT','Gemini','Claude','Copilot (Microsoft)','DeepSeek','Grok','GumLoop','ElevenLabs','HeyGen','Otra'];
+function respuestas(){
+  var L=state.nivel?NIVELES[7-state.nivel]:null,d=state.q1-state.q2;
+  var herr=ORDEN.filter(function(k){return state.herr.indexOf(k)>=0});
+  return {
+    nombre:state.nombre.trim(),
+    expertise_hoy:state.q1,
+    expertise_inicio_2026:state.q2,
+    diferencia:d,
+    nivel:state.nivel,
+    nivel_nombre:L?L.l.join(' '):'',
+    herramientas:herr,
+    otra_herramienta:herr.indexOf('Otra')>=0?state.otra.trim():'',
+    trabaja_en_it:state.it
+  };
+}
+function filas(){
+  var r=respuestas(),d=r.diferencia;
+  var f=[
+    ['1 · Expertise hoy',r.expertise_hoy+'%'],
+    ['2 · Expertise a principios de 2026',r.expertise_inicio_2026+'% ('+(d===0?'sin cambio':(d>0?'+'+d:'−'+Math.abs(d))+' '+(Math.abs(d)===1?'punto':'puntos'))+')'],
+    ['3 · Nivel de uso de la I.A.',r.nivel?r.nivel+'. '+r.nivel_nombre:'—'],
+    ['4 · Herramientas frecuentes',r.herramientas.length?r.herramientas.join(', '):'Ninguna de la lista']
+  ];
+  if(r.herramientas.indexOf('Otra')>=0)f.push(['5 · Otra',r.otra_herramienta||'—']);
+  f.push(['6 · Trabaja en Sistemas/IT',r.trabaja_en_it||'—']);
+  f.push(['7 · Nombre',r.nombre||'—']);
+  return f;
+}
+function resumenTexto(){
+  return 'Liderazgo Aumentado con Inteligencia Artificial\n'+filas().map(function(f){return f[0]+': '+f[1]}).join('\n');
+}
+var ENDPOINT='https://formspree.io/f/xzedbwaq';
+var enviando=false,enviadas=null; /* enviadas: filas tal como salieron en el último envío exitoso */
+var btn=$('#enviar'),envio=$('#envio'),envioErr=$('#envio-err'),cierre=$('#cierre');
+function drawCierre(){
+  var n=state.nombre.trim();
+  $('#cierre-t').textContent=n?'Gracias, '+n+'.':'Gracias.';
+  var dl=$('#cierre-dl'); dl.textContent='';
+  (enviadas||filas()).forEach(function(f){
+    var dt=document.createElement('dt'),dd=document.createElement('dd');
+    dt.textContent=f[0]; dd.textContent=f[1]; dl.appendChild(dt); dl.appendChild(dd);
+  });
+}
+function faltantes(){
+  var m=[];
+  if(!state.nivel)m.push('p3');
+  if(state.herr.indexOf('Otra')>=0&&!state.otra.trim())m.push('p5');
+  if(!state.it)m.push('p6');
+  if(!state.nombre.trim())m.push('p7');
+  return m;
+}
+var marcadas=false;
+function drawErrores(){
+  var m=marcadas?faltantes():[];
+  ['p3','p5','p6','p7'].forEach(function(id){$('#'+id+'-err').hidden=m.indexOf(id)<0});
+}
+function changed(){
+  drawErrores();
+  if(state.enviado){ /* cambió algo después de enviar: se ofrece reenviar */
+    state.enviado=false; enviadas=null;
+    cierre.hidden=true; envio.hidden=false;
+    btn.textContent='Enviar de nuevo con los cambios';
+  }
+}
+var suave=!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches);
+function ir(el){el.scrollIntoView({behavior:suave?'smooth':'auto',block:'start'})}
+function datosParaEnviar(){
+  var r=respuestas(),fd=new FormData();
+  fd.append('_subject','Liderazgo Aumentado con IA · Respuestas de '+r.nombre);
+  fd.append('nombre',r.nombre);
+  fd.append('expertise_hoy_pct',r.expertise_hoy);
+  fd.append('expertise_inicio_2026_pct',r.expertise_inicio_2026);
+  fd.append('diferencia_puntos',r.diferencia);
+  fd.append('nivel',r.nivel);
+  fd.append('nivel_nombre',r.nivel_nombre);
+  fd.append('herramientas',r.herramientas.length?r.herramientas.join(', '):'Ninguna de la lista');
+  fd.append('otra_herramienta',r.otra_herramienta);
+  fd.append('trabaja_en_it',r.trabaja_en_it);
+  return fd;
+}
+function envioOk(){
+  enviando=false; state.enviado=true; enviadas=filas();
+  btn.disabled=false; btn.textContent='Enviar mis respuestas';
+  envioErr.hidden=true; $('#copiar-fallo').hidden=true; $('#copiar-fallo-msg').hidden=true;
+  envio.hidden=true; cierre.hidden=false;
+  $('#copiar-msg').hidden=true; $('#copia').hidden=true;
+  drawCierre(); ir(cierre);
+}
+function envioFallo(status){
+  enviando=false; btn.disabled=false; btn.textContent='Reintentar el envío';
+  envioErr.hidden=false;
+  envioErr.textContent=(status?'No se pudo enviar (error '+status+').':'No se pudo enviar: parece que no hay conexión.')+
+    ' Tus respuestas siguen acá; probá de nuevo en un momento. Si sigue fallando, copiá el resumen y mandámelo por mensaje.';
+  $('#copiar-fallo').hidden=false;
+}
+$('#relevamiento').addEventListener('submit',function(e){
+  e.preventDefault();
+  if(enviando)return;
+  marcadas=true;
+  var m=faltantes();
+  drawErrores();
+  if(m.length){ir($('#'+m[0]));return}
+  enviando=true; btn.disabled=true; btn.textContent='Enviando…'; envioErr.hidden=true;
+  fetch(ENDPOINT,{method:'POST',body:datosParaEnviar(),headers:{'Accept':'application/json'}})
+    .then(function(res){if(res.ok)envioOk();else envioFallo(res.status)})
+    .catch(function(){envioFallo(0)});
+});
+function copiar(msg,ta){
+  var t=resumenTexto();
+  var ok=function(){msg.hidden=false; msg.textContent='Resumen copiado.'};
+  var manual=function(){
+    if(ta){ta.hidden=false; ta.value=t; ta.focus(); ta.select()}
+    msg.hidden=false;
+    msg.textContent=ta?'No se pudo copiar automáticamente. El texto ya quedó seleccionado: copialo con Ctrl+C o Cmd+C.':'No se pudo copiar automáticamente.';
+  };
+  try{navigator.clipboard.writeText(t).then(ok,manual)}catch(_){manual()}
+}
+$('#copiar').addEventListener('click',function(){copiar($('#copiar-msg'),$('#copia'))});
+$('#copiar-fallo').addEventListener('click',function(){copiar($('#copiar-fallo-msg'),null)});
+
+/* ---------- Arranque ---------- */
+otra.value=''; nombre.value='';
+setVB(); drawQ1(); drawQ2(); drawNivel(); drawHerr(); drawIT();
+})();
+</script>
+</body>
+</html>
